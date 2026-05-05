@@ -1,137 +1,80 @@
-// AOS Scenario Generator GOD-TIER
-// Added:
-// - campaign tracker
-// - scenario history
-// - export JSON
-// - extended Ravaged Coast data structure
+import { useState } from "react";
+import { generateScenario } from "./engine/generator";
+import MapCard from "./ui/MapCard";
+import TwistCard from "./ui/TwistCard";
+import PlayerCard from "./ui/PlayerCard";
+import TwistSelection from "./ui/TwistSelection";
+// import { playRoll } from "./engine/sound";
 
-import { useState, useEffect } from "react";
-import "./index.css";
-
-// ================= TYPES =================
-type Player = {
-  id: string;
-  name: string;
-  emberstoneShards: number;
-};
-
-type Scenario = {
-  battleplan: any;
-  twist: any;
-  emberstone: number | null;
-  date: string;
-};
-
-// ================= DATA =================
-const BATTLEPLANS = [
-  { name: "Rift in the Peaks", description: "Control shifting objectives" },
-  { name: "Rise Through the Ashes", description: "Climb and survive" },
-  { name: "Raid on Hel's Claw", description: "Strike enemy stronghold" }
-];
-
-const TWISTS = [
-  { name: "Ash Storm", desc: "Visibility reduced" },
-  { name: "Corruption", desc: "Units decay" },
-  { name: "Arcane Surge", desc: "Magic empowered" }
-];
-
-// ================= HELPERS =================
-const rand = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
-
-// ================= STORAGE =================
-const save = (key: string, data: any) => localStorage.setItem(key, JSON.stringify(data));
-const load = (key: string) => JSON.parse(localStorage.getItem(key) || "null");
-
-// ================= APP =================
 export default function App() {
-  const [players, setPlayers] = useState<Player[]>(load("players") || []);
-  const [history, setHistory] = useState<Scenario[]>(load("history") || []);
+  const [players] = useState<any[]>([
+    {
+      id: "1",
+      name: "Gracz 1",
+      faction: "Stormcast Eternals",
+      emberstone: 0,
+      wins: 0,
+    },
+    {
+      id: "2",
+      name: "Gracz 2",
+      faction: "Skaven",
+      emberstone: 0,
+      wins: 0,
+    },
+  ]);
 
-  const [name, setName] = useState("");
-  const [shards, setShards] = useState(0);
-
-  const [battleplan, setBattleplan] = useState<any>(null);
-  const [twist, setTwist] = useState<any>(null);
-  const [emberstone, setEmberstone] = useState<number | null>(null);
-
-  useEffect(() => save("players", players), [players]);
-  useEffect(() => save("history", history), [history]);
-
-  const addPlayer = () => {
-    if (!name) return;
-    setPlayers([...players, { id: crypto.randomUUID(), name, emberstoneShards: shards }]);
-    setName("");
-    setShards(0);
-  };
+  const [game, setGame] = useState<any>(null);
+  const [twistOptions, setTwistOptions] = useState<any[]>([]);
+  const [selectedTwist, setSelectedTwist] = useState<any>(null);
 
   const generate = () => {
-    const bp = rand(BATTLEPLANS);
-    const tw = rand(TWISTS);
-    const em = Math.floor(Math.random() * 3) + 1;
+    // playRoll();
 
-    setBattleplan(bp);
-    setTwist(tw);
-    setEmberstone(em);
+    const g = generateScenario(players);
 
-    const scenario = {
-      battleplan: bp,
-      twist: tw,
-      emberstone: em,
-      date: new Date().toLocaleString()
-    };
-
-    setHistory([scenario, ...history]);
+    setGame(g);
+    setTwistOptions(g.twistOptions); // 👈 teraz pochodzi z generatora
+    setSelectedTwist(null);
   };
 
-  const exportJSON = () => {
-    const blob = new Blob([JSON.stringify(history, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "aos-history.json";
-    a.click();
+  const handleTwistSelect = (twist: any) => {
+    setSelectedTwist(twist);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl mb-4">AOS Generator GOD-TIER</h1>
+    <div className="tabletop">
+      <h1 className="logo">WARHAMMER</h1>
+      <h2 className="subtitle">RAVAGED COAST</h2>
 
-      {/* PLAYERS */}
-      <div>
-        <h2>Players</h2>
-        <input placeholder="name" value={name} onChange={e => setName(e.target.value)} />
-        <input type="number" value={shards} onChange={e => setShards(Number(e.target.value))} />
-        <button onClick={addPlayer}>Add</button>
+      <button className="main-btn" onClick={generate}>
+        🎲 GENERATE BATTLE
+      </button>
 
-        {players.map(p => (
-          <div key={p.id}>{p.name} ({p.emberstoneShards})</div>
-        ))}
-      </div>
-
-      {/* GENERATE */}
-      <button onClick={generate}>Generate Scenario</button>
-
-      {/* RESULT */}
-      {battleplan && (
+      {/* 🔮 WYBÓR TWISTU */}
+      {game && twistOptions.length > 0 && !selectedTwist && (
         <div>
-          <h2>Result</h2>
-          <p>{battleplan.name}</p>
-          <p>{twist.name}</p>
-          <p>Emberstone: {emberstone}</p>
+          <h2>Underdog wybiera Twist</h2>
+          <TwistSelection
+            options={twistOptions}
+            onSelect={handleTwistSelect}
+          />
         </div>
       )}
 
-      {/* HISTORY */}
-      <div>
-        <h2>History</h2>
-        {history.map((h, i) => (
-          <div key={i}>
-            {h.date} - {h.battleplan.name}
-          </div>
-        ))}
-      </div>
+      {/* ⚔️ FINALNY WIDOK GRY */}
+      {game && selectedTwist && (
+        <div className="board">
+          <MapCard map={game.map} />
+          <TwistCard twist={selectedTwist} />
 
-      <button onClick={exportJSON}>Export JSON</button>
+          <div className="players-row">
+            {game.players.map((p: any) => (
+              <PlayerCard key={p.id} player={p} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
