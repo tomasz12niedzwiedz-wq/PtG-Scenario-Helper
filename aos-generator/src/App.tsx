@@ -44,9 +44,6 @@ export default function App() {
 
   return (
     <div className="tabletop">
-      <h1 className="logo">WARHAMMER</h1>
-      <h2 className="subtitle">RAVAGED COAST</h2>
-
       <button className="main-btn" onClick={generate}>
         🎲 GENERATE BATTLE
       </button>
