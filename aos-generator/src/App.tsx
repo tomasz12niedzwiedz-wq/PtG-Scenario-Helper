@@ -14,14 +14,8 @@ export default function App() {
       faction: "Stormcast Eternals",
       emberstone: 0,
       wins: 0,
-    },
-    {
-      id: "2",
-      name: "Gracz 2",
-      faction: "Skaven",
-      emberstone: 0,
-      wins: 0,
-    },
+      loses: 0
+    }
   ]);
 
   const [game, setGame] = useState<any>(null);
@@ -34,7 +28,7 @@ export default function App() {
     const g = generateScenario(players);
 
     setGame(g);
-    setTwistOptions(g.twistOptions); // 👈 teraz pochodzi z generatora
+    setTwistOptions(g.twistOptions);
     setSelectedTwist(null);
   };
 
@@ -48,10 +42,10 @@ export default function App() {
         🎲 GENERATE BATTLE
       </button>
 
-      {/* 🔮 WYBÓR TWISTU */}
+      {/* Twist selection */}
       {game && twistOptions.length > 0 && !selectedTwist && (
         <div>
-          <h2>Underdog wybiera Twist</h2>
+          <h2>Twist</h2>
           <TwistSelection
             options={twistOptions}
             onSelect={handleTwistSelect}

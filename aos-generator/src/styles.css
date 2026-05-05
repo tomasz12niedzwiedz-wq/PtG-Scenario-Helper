@@ -44,7 +44,7 @@ body {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border: 2px solid gold;
+  border: 2px solid #a88c4a;
   border-radius: 12px;
   padding: 15px;
   background: linear-gradient(#2a1a0f, #120a05);
@@ -116,11 +116,15 @@ body {
 
 /* Button */
 .main-btn {
-  background: linear-gradient(#7a5a2e, #3a2412);
-  border: 2px solid gold;
+  background: linear-gradient(#97641d, #3a2412);
+  font-family: "Uncial Antiqua";
+  font-style: bold;
+  color: #d3c5a3;
   padding: 15px 25px;
   font-size: 18px;
   cursor: pointer;
+  border: 2px solid #a88c4a;
+  border-radius: 12px;
 }
 
 /* Cards */
@@ -164,11 +168,12 @@ body {
   width: 200px;
   padding: 15px;
   background: linear-gradient(#2a1a0f, #120a05);
-  border: 2px solid gold;
+  border: 2px solid #a88c4a;
+  border-radius: 12px;
   cursor: pointer;
   transition: 0.2s;
 }
 
 .twist-card:hover {
-  box-shadow: 0 0 20px gold;
+  box-shadow: 0 0 20px #a88c4a;
 }
