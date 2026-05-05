@@ -23,8 +23,7 @@ export type MapScenario = {
   deployment: string;  winCondition: string;};
 
 export type Twist = {
-  id: string;
-  table: string;
+  diceRoll: string;
   name: string;
   effect: string;
 };

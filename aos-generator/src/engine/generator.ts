@@ -1,19 +1,21 @@
 import { maps } from "../data/maps";
-import { twists } from "../data/twists";
+import { twistGroups } from "../data/twists";
 import type { Player, GameSession, Twist } from "./types";
 
 const roll = <T,>(arr: T[]): T =>
   arr[Math.floor(Math.random() * arr.length)];
 
-function getTwistOptions(allTwists: Twist[], count = 3): Twist[] {
-  const shuffled = [...allTwists].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+export function getRandomTwistById(): Twist {
+  const groupIds = Object.keys(twistGroups);
+  const selectedGroupId = roll(groupIds);
+  const group = twistGroups[selectedGroupId];
+  return roll(group);
 }
 
-export function getRandomTwistById(): Twist {
-  const randomId = Math.floor(Math.random() * 6).toString(); // 0 to 5
-  const candidates = twists.filter(t => t.id === randomId);
-  return candidates.length > 0 ? roll(candidates) : roll(twists);
+export function getRandomTwists(): Twist[] {
+  const groupIds = Object.keys(twistGroups);
+  const selectedGroupId = roll(groupIds);
+  return twistGroups[selectedGroupId] ?? [];
 }
 
 export function determineUnderdog(players: Player[]) {
@@ -38,8 +40,8 @@ export function generateScenario(players: Player[]): GameSession {
     emberstoneNodes: Math.floor(Math.random() * 3) + 2,
   };
 
-  // 🎴 3 różne twisty do wyboru
-  const twistOptions = getTwistOptions(twists, 3);
+  // 🎴 Random twist(s) - if id "1", show all as table
+  const twistOptions = getRandomTwists();
 
   return {
     id: crypto.randomUUID(),
