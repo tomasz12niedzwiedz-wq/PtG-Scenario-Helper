@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { generateScenario } from "./engine/generator";
 import MapCard from "./ui/MapCard";
 import TwistCard from "./ui/TwistCard";
@@ -225,13 +226,30 @@ export default function App() {
 
       {/* ⚔️ FINALNY WIDOK GRY */}
       {game && (
-        <div className="board">
+        <motion.div
+          className="board"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <MapCard map={game.map} />
           {twistOptions.length === 1 ? (
-            <TwistCard twist={selectedTwist} />
+            <motion.div
+              key={`card-${game.id}`}
+              initial={{ opacity: 0, rotateY: 90 }}
+              animate={{ opacity: 1, rotateY: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <TwistCard twist={selectedTwist} />
+            </motion.div>
           ) : (
-            <div className="twist-table">
-              <h2>Twists</h2>
+            <motion.div
+              key={`table-${game.id}`}
+              className="twist-table"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <table>
                 <thead>
                   <tr>
@@ -242,15 +260,20 @@ export default function App() {
                 </thead>
                 <tbody>
                   {twistOptions.map((twist, index) => (
-                    <tr key={index}>
+                    <motion.tr
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                    >
                       <td>{twist.diceRoll}</td>
                       <td>{twist.name}</td>
                       <td>{twist.effect}</td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            </motion.div>
           )}
 
           <div className="players-row">
@@ -258,7 +281,7 @@ export default function App() {
               <PlayerCard key={p.id} player={p} />
             ))}
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );
