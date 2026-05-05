@@ -13,33 +13,27 @@ export type Player = {
   isUnderdog?: boolean;
 };
 
-export type Objective = {
-  id: string;
-  x: number;
-  y: number;
-};
-
 export type MapScenario = {
   id: string;
   name: string;
+  description: string;
   image: string;
-  objectives: Objective[];
+  objectives: string;
   emberstoneNodes: number;
-  deployment: string;
-};
+  deployment: string;  winCondition: string;};
 
 export type Twist = {
   id: string;
+  table: string;
   name: string;
   effect: string;
-  isUnderdogChoice?: boolean;
 };
 
 export type GameSession = {
   id: string;
   map: MapScenario;
   players: Player[];
-  twistOptions: Twist[]; // 👈 zamiast twist
+  twistOptions: Twist[];
   emberstoneAwarded: number;
   date: number;
 };

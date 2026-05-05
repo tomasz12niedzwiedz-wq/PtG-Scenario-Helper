@@ -6,6 +6,7 @@ export default function PlayerCard({ player }: any) {
       <h3>{player.name}</h3>
       <p>{player.faction}</p>
       <p>🔥 {player.emberstone}</p>
+      <p>Wins: {player.wins} / Losses: {player.loses}</p>
 
       {player.isUnderdog && (
         <div className="underdog-badge">UNDERDOG</div>

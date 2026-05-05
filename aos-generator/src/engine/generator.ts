@@ -10,6 +10,12 @@ function getTwistOptions(allTwists: Twist[], count = 3): Twist[] {
   return shuffled.slice(0, count);
 }
 
+export function getRandomTwistById(): Twist {
+  const randomId = Math.floor(Math.random() * 6).toString(); // 0 to 5
+  const candidates = twists.filter(t => t.id === randomId);
+  return candidates.length > 0 ? roll(candidates) : roll(twists);
+}
+
 export function determineUnderdog(players: Player[]) {
   const sorted = [...players].sort(
     (a, b) => a.wins - b.wins || a.emberstone - b.emberstone
@@ -27,7 +33,10 @@ export function determineUnderdog(players: Player[]) {
 export function generateScenario(players: Player[]): GameSession {
   const updatedPlayers = determineUnderdog(players);
 
-  const map = roll(maps);
+  const map = {
+    ...roll(maps),
+    emberstoneNodes: Math.floor(Math.random() * 3) + 2,
+  };
 
   // 🎴 3 różne twisty do wyboru
   const twistOptions = getTwistOptions(twists, 3);

@@ -4,6 +4,7 @@ body {
   background: url("./assets/bg.png") no-repeat fixed;
   background-size: cover;
   color: #e6d3a3;
+  padding: 1%;
 }
 
 /* Layout */
@@ -148,6 +149,71 @@ body {
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+
+.player-manager {
+  background: rgba(18, 10, 5, 0.85);
+  border: 2px solid #a88c4a;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 20px;
+  display: inline-block;
+  text-align: left;
+  max-width: 560px;
+}
+
+.player-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.player-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  gap: 6px;
+  color: #e6d3a3;
+}
+
+.player-form input {
+  border: 1px solid #a88c4a;
+  border-radius: 8px;
+  padding: 10px;
+  background: #1e1207;
+  color: #e6d3a3;
+}
+
+.player-list {
+  display: grid;
+  gap: 10px;
+}
+
+.player-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(25, 15, 8, 0.9);
+  border: 1px solid #a88c4a;
+  border-radius: 10px;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.main-btn.small {
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.main-btn.cancel {
+  background: linear-gradient(#4a3220, #25150b);
 }
 
 .underdog-badge {
