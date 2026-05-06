@@ -4,7 +4,6 @@ import { generateScenario } from "./engine/generator";
 import MapCard from "./ui/MapCard";
 import TwistCard from "./ui/TwistCard";
 import PlayerCard from "./ui/PlayerCard";
-// import { playRoll } from "./engine/sound";
 
 const STORAGE_KEY = "aos-generator-players";
 
@@ -113,31 +112,6 @@ export default function App() {
     setTwistOptions(g.twistOptions);
     setSelectedTwist(g.twistOptions.length === 1 ? g.twistOptions[0] : null);
     setWinnerId(null); // 🔥 reset winner przy nowej grze
-  };
-
-  const endBattle = (playerId: string) => {
-    setWinnerId(playerId);
-
-    const updatedPlayers = game.players.map((p: any) => {
-      if (p.id === playerId) {
-        return {
-          ...p,
-          emberstone: p.emberstone + game.emberstoneAwarded,
-          wins: p.wins + 1,
-        };
-      }
-      return {
-        ...p,
-        loses: (p.loses || 0) + 1,
-      };
-    });
-
-    setGame((prev: any) => ({
-      ...prev,
-      players: updatedPlayers,
-    }));
-
-    setPlayers(updatedPlayers); // 🔥 zapis do globalnego stanu
   };
 
   return (
@@ -254,8 +228,16 @@ export default function App() {
           )}
 
           <div className="players-row">
-            {game.players.map((p: any) => (
-              <PlayerCard key={p.id} player={p} />
+            {players.map((p: any) => (
+              <PlayerCard
+                key={p.id}
+                player={p}
+                onUpdate={(updated: any) => {
+                  setPlayers((prev) =>
+                    prev.map((pl) => (pl.id === updated.id ? updated : pl)),
+                  );
+                }}
+              />
             ))}
           </div>
         </motion.div>
