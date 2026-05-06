@@ -458,7 +458,7 @@ body {
 
 .twist-table {
   margin: 20px 0;
-  text-align: left;
+  text-align: center;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
@@ -485,7 +485,7 @@ body {
 .twist-table td {
   padding: 14px 16px;
   border-bottom: 1px solid #a88c4a;
-  text-align: left;
+  text-align: center;
 }
 
 .twist-table th {
