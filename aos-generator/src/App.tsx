@@ -111,7 +111,7 @@ export default function App() {
     setGame(g);
     setTwistOptions(g.twistOptions);
     setSelectedTwist(g.twistOptions.length === 1 ? g.twistOptions[0] : null);
-    setWinnerId(null); // 🔥 reset winner przy nowej grze
+    setWinnerId(null);
   };
 
   return (
