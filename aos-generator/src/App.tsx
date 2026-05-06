@@ -199,9 +199,11 @@ export default function App() {
 
       {game && (
         <motion.div
+          key={`map-${game.id}`}
           className="board"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
         >
           <MapCard map={game.map} />
 
@@ -231,8 +233,6 @@ export default function App() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.97 }}
                       onClick={() => setSelectedTwist(twist)}
                       style={{ cursor: "pointer" }}
                     >
@@ -246,17 +246,6 @@ export default function App() {
             </motion.div>
           )}
 
-          {selectedTwist && !winnerId && (
-            <div className="end-screen">
-              <h2>🏁 Who won?</h2>
-              {game.players.map((p: any) => (
-                <button key={p.id} onClick={() => endBattle(p.id)}>
-                  {p.name}
-                </button>
-              ))}
-            </div>
-          )}
-
           {winnerId && (
             <h2 className="winner">
               🏆 Winner:{" "}
@@ -265,16 +254,8 @@ export default function App() {
           )}
 
           <div className="players-row">
-            {players.map((p: any) => (
-              <PlayerCard
-                key={p.id}
-                player={p}
-                onUpdate={(updated: any) => {
-                  setPlayers((prev) =>
-                    prev.map((pl) => (pl.id === updated.id ? updated : pl)),
-                  );
-                }}
-              />
+            {game.players.map((p: any) => (
+              <PlayerCard key={p.id} player={p} />
             ))}
           </div>
         </motion.div>

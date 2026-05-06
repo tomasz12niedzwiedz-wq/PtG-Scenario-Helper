@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function PlayerCard({ player, onUpdate }: any) {
   const addStone = () => {
     onUpdate({
@@ -20,13 +22,17 @@ export default function PlayerCard({ player, onUpdate }: any) {
 
       <div className="ember-controls">
         <button onClick={removeStone}>−</button>
-        <span className="ember-count">🔥 {player.emberstone}</span>
-        <button onClick={addStone}>+</button>
-      </div>
 
-      <div className="stats">
-        <span>W: {player.wins} </span>
-        <span>L: {player.loses}</span>
+        <motion.span
+          key={player.emberstone}
+          initial={{ scale: 1.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="ember-count"
+        >
+          🔥 {player.emberstone}
+        </motion.span>
+
+        <button onClick={addStone}>+</button>
       </div>
     </div>
   );
