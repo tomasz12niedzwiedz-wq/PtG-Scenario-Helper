@@ -7,6 +7,8 @@ import PlayerCard from "./ui/PlayerCard";
 
 const STORAGE_KEY = "aos-generator-players";
 
+type RegionKey = "scorched" | "gnaw" | "hateful" | "hel";
+
 const defaultPlayers = [
   {
     id: "1",
@@ -20,10 +22,8 @@ const defaultPlayers = [
 
 const loadPlayersFromStorage = () => {
   if (typeof window === "undefined") return defaultPlayers;
-
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (!stored) return defaultPlayers;
-
   try {
     return JSON.parse(stored);
   } catch {
@@ -33,8 +33,13 @@ const loadPlayersFromStorage = () => {
 
 export default function App() {
   const [players, setPlayers] = useState<any[]>(loadPlayersFromStorage);
-
   const [winnerId, setWinnerId] = useState<string | null>(null);
+
+  const [game, setGame] = useState<any>(null);
+  const [twistOptions, setTwistOptions] = useState<any[]>([]);
+  const [selectedTwist, setSelectedTwist] = useState<any>(null);
+
+  const [showPlayerManager, setShowPlayerManager] = useState(false);
 
   const [playerForm, setPlayerForm] = useState<any>({
     id: "",
@@ -47,24 +52,26 @@ export default function App() {
 
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
 
-  const [game, setGame] = useState<any>(null);
-  const [twistOptions, setTwistOptions] = useState<any[]>([]);
-  const [selectedTwist, setSelectedTwist] = useState<any>(null);
-  const [showPlayerManager, setShowPlayerManager] = useState(false);
+  const [regions, setRegions] = useState<Record<RegionKey, boolean>>({
+    scorched: true,
+    gnaw: true,
+    hateful: true,
+    hel: true,
+  });
 
-  const resetPlayerForm = () => {
-    setPlayerForm({
-      id: "",
-      name: "",
-      faction: "",
-      emberstone: 0,
-      wins: 0,
-      loses: 0,
-    });
-    setEditingPlayerId(null);
+  const toggleRegion = (key: RegionKey) => {
+    setRegions((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
-  const handlePlayerFormChange = (field: string, value: string | number) => {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+  }, [players]);
+
+  const handlePlayerFormChange = (field: string, value: string) => {
     setPlayerForm((prev: any) => ({
       ...prev,
       [field]: value,
@@ -76,23 +83,26 @@ export default function App() {
 
     if (editingPlayerId) {
       setPlayers((prev) =>
-        prev.map((player) =>
-          player.id === editingPlayerId
-            ? { ...playerForm, id: editingPlayerId }
-            : player,
+        prev.map((p) =>
+          p.id === editingPlayerId ? { ...playerForm, id: editingPlayerId } : p,
         ),
       );
     } else {
       setPlayers((prev) => [
         ...prev,
-        {
-          ...playerForm,
-          id: crypto.randomUUID(),
-        },
+        { ...playerForm, id: crypto.randomUUID() },
       ]);
     }
 
-    resetPlayerForm();
+    setPlayerForm({
+      id: "",
+      name: "",
+      faction: "",
+      emberstone: 0,
+      wins: 0,
+      loses: 0,
+    });
+    setEditingPlayerId(null);
   };
 
   const handleEditPlayer = (player: any) => {
@@ -100,22 +110,23 @@ export default function App() {
     setEditingPlayerId(player.id);
   };
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
-  }, [players]);
-
   const generate = () => {
-    const g = generateScenario(players);
+    const selected = Object.entries(regions)
+      .filter(([_, v]) => v)
+      .map(([k]) => k);
+
+    const g = generateScenario(players, selected);
 
     setGame(g);
     setTwistOptions(g.twistOptions);
+    // Jeśli jest tylko jedna opcja, wybierz ją automatycznie, w przeciwnym razie pokaż tabelę
     setSelectedTwist(g.twistOptions.length === 1 ? g.twistOptions[0] : null);
     setWinnerId(null);
   };
 
   return (
     <div className="tabletop">
+      {/* ☰ MENU */}
       <button
         className="hamburger-btn"
         onClick={() => setShowPlayerManager(true)}
@@ -123,6 +134,7 @@ export default function App() {
         ☰ Players
       </button>
 
+      {/* 🧾 MODAL */}
       {showPlayerManager && (
         <div className="player-manager-modal">
           <div
@@ -157,15 +169,55 @@ export default function App() {
               {editingPlayerId ? "Save" : "Add"}
             </button>
 
-            {players.map((p) => (
-              <div key={p.id}>
-                {p.name} ({p.faction})
-                <button onClick={() => handleEditPlayer(p)}>Edit</button>
-              </div>
-            ))}
+            <div className="players-list-admin">
+              {players.map((p) => (
+                <div key={p.id} className="player-admin-row">
+                  <span>
+                    {p.name} ({p.faction})
+                  </span>
+                  <button onClick={() => handleEditPlayer(p)}>Edit</button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
+
+      {/* REGION SELECTOR - Klikalny cały Label */}
+      <div className="region-selector">
+        {[
+          { key: "scorched", label: "Scorched Outskirts" },
+          { key: "gnaw", label: "Gnaw’s Edge" },
+          { key: "hateful", label: "Hateful Shores" },
+          { key: "hel", label: "Hel’s Claw" },
+        ].map((r) => {
+          const active = regions[r.key as RegionKey];
+
+          return (
+            <motion.label
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              layout
+              key={r.key}
+              className={`region-card ${active ? "active" : ""}`}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={active}
+                onChange={() => toggleRegion(r.key as RegionKey)}
+                style={{ cursor: "pointer" }}
+              />
+              {r.label}
+            </motion.label>
+          );
+        })}
+      </div>
 
       <button className="main-btn" onClick={generate}>
         🎲 GENERATE BATTLE
@@ -173,52 +225,60 @@ export default function App() {
 
       {game && (
         <motion.div
-          key={`map-${game.id}`}
+          key={game.id}
           className="board"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
         >
           <MapCard map={game.map} />
 
-          {selectedTwist && <TwistCard twist={selectedTwist} />}
-
-          {!selectedTwist && twistOptions.length > 0 && (
-            <motion.div
-              key={`table-${game.id}`}
-              className="twist-table"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <table>
-                <thead>
-                  <tr>
-                    <th>Dice Roll</th>
-                    <th>Name</th>
-                    <th>Effect</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {twistOptions.map((twist: any, index: number) => (
-                    <motion.tr
-                      key={twist.id ?? index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                      onClick={() => setSelectedTwist(twist)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <td>{twist.diceRoll}</td>
-                      <td>{twist.name}</td>
-                      <td>{twist.effect}</td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </motion.div>
-          )}
+          {/* TWIST SECTION */}
+          <div className="twist-section" style={{ margin: "20px 0" }}>
+            {selectedTwist ? (
+              <div className="selected-twist-container">
+                <button
+                  className="reset-twist-btn"
+                  onClick={() => setSelectedTwist(null)}
+                  style={{
+                    marginBottom: "10px",
+                    padding: "5px 15px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ↩ Change Twist / Show Table
+                </button>
+                <TwistCard twist={selectedTwist} />
+              </div>
+            ) : (
+              twistOptions.length > 0 && (
+                <div className="twist-table">
+                  <h3>Select Twist (Roll Dice)</h3>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Dice Roll</th>
+                        <th>Name</th>
+                        <th>Effect</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {twistOptions.map((twist: any, index: number) => (
+                        <tr
+                          key={index}
+                          onClick={() => setSelectedTwist(twist)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <td>{twist.diceRoll}</td>
+                          <td style={{ fontWeight: "bold" }}>{twist.name}</td>
+                          <td>{twist.effect}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            )}
+          </div>
 
           {winnerId && (
             <h2 className="winner">

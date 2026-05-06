@@ -1,15 +1,9 @@
 import { maps } from "../data/maps";
 import { twistGroups } from "../data/twists";
+import { mapGroups } from "../data/mapGroups";
 import type { Player, GameSession, Twist } from "./types";
 
 const roll = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-
-export function getRandomTwistById(): Twist {
-  const groupIds = Object.keys(twistGroups);
-  const selectedGroupId = roll(groupIds);
-  const group = twistGroups[selectedGroupId];
-  return roll(group);
-}
 
 export function getRandomTwists(): Twist[] {
   const groupIds = Object.keys(twistGroups);
@@ -28,11 +22,23 @@ export function determineUnderdog(players: Player[]) {
   return sorted;
 }
 
-export function generateScenario(players: Player[]): GameSession {
+export function generateScenario(
+  players: Player[],
+  selectedRegions: string[],
+): GameSession {
   const updatedPlayers = determineUnderdog(players);
 
+  const allowedIds = selectedRegions.flatMap(
+    (region) => mapGroups[region as keyof typeof mapGroups] || [],
+  );
+
+  const filteredMaps =
+    allowedIds.length > 0
+      ? maps.filter((m) => allowedIds.includes(m.id))
+      : maps;
+
   const map = {
-    ...roll(maps),
+    ...roll(filteredMaps),
     emberstoneNodes: Math.floor(Math.random() * 3) + 2,
   };
 
