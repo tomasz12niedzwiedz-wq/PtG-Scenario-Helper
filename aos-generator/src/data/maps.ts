@@ -27,6 +27,18 @@ export const maps: MapScenario[] = [
   },
   {
     id: "m3",
+    name: "Standing on Skulls",
+    image: "/assets/Ravaged3.png",
+    objectives: "No specific objectives shown on the map.",
+    emberstoneNodes: 0,
+    description:
+      "The player who has the lowest total number of emberstone shards picks which player uses the Western Territory and which player uses the Eastern Territory. If the players have the same total number of emberstone shards, roll off and the winner picks.",
+    deployment: "The player who assigned territories begins deployment.",
+    winCondition:
+      "Victory points are scored as follows: \n• Monster Hunters: Each player scores 2 victory points at the end of their turn for each enemy MONSTER they destroyed in that turn. \n• Destroy their Ranks: Each player scores 1 victory point at the end of their turn for each enemy non-MONSTER unit they destroyed in that turn.",
+  },
+  {
+    id: "m4",
     name: "Ransack the Encampment",
     image: "/assets/Ravaged4.png",
     objectives: "Set up 3 objectives as shown on the map.",
@@ -39,7 +51,19 @@ export const maps: MapScenario[] = [
       "Take and Hold: Each player scores 1 victory point at the end of their turn for each objective they control. Lay Them Low: The raider scores 1 victory point at the end of each turn for each enemy unit they destroyed in that turn.",
   },
   {
-    id: "m4",
+    id: "m5",
+    name: "Blood in the Valleys",
+    image: "/assets/Ravaged5.png",
+    objectives: "No specific objectives shown on the map.",
+    emberstoneNodes: 0,
+    description:
+      "The player who has the lowest total number of emberstone shards picks which player uses the Combined Territory and which player uses the Split Territories. If the players have the same total number of emberstone shards, roll off and the winner picks.",
+    deployment: "The player who assigned territories begins deployment.",
+    winCondition:
+      "The player with the most friendly units wholly within neutral territory at the end of the battle wins a major victory. If both players have the same number of friendly units in neutral territory at the end of the battle, the battle is a draw.",
+  },
+  {
+    id: "m6",
     name: "Light the Fires",
     image: "/assets/Ravaged6.png",
     objectives: "Set up 2 objectives as shown on the map.",
@@ -51,7 +75,7 @@ export const maps: MapScenario[] = [
       "Take and Hold: Each player scores 1 victory point at the end of their turn for each objective they control.",
   },
   {
-    id: "m5",
+    id: "m7",
     name: "Twisted by Rage",
     image: "/assets/Ravaged7.png",
     objectives: "None shown on map.",
@@ -64,7 +88,7 @@ export const maps: MapScenario[] = [
       "At the end of the battle: If the mark's general has been destroyed, the executioner wins a major victory. If the mark's general has not been destroyed, the mark wins a major victory.",
   },
   {
-    id: "m6",
+    id: "m8",
     name: "Storm the Land Bridge",
     image: "/assets/Ravaged8.png",
     objectives: "Set up 1 objectives as shown on the map.",
@@ -77,7 +101,7 @@ export const maps: MapScenario[] = [
       "The player who controls the objective at the end of the battle wins a major victory. If neither player controls the objective at the end of the battle, the battle is a draw.",
   },
   {
-    id: "m7",
+    id: "m9",
     name: "Beneath the Shadow of Brazenskull",
     image: "/assets/Ravaged9.png",
     objectives: "Set up 3 objectives as shown on the map.",
@@ -89,7 +113,7 @@ export const maps: MapScenario[] = [
       "The player who controls the most objectives at the end of the battle wins a major victory. If both players control the same number of objectives at the end of the battle, the battle is a draw.",
   },
   {
-    id: "m8",
+    id: "m10",
     name: "Assault on the Sea Cave",
     image: "/assets/Ravaged10.png",
     objectives: "Set up 4 objectives as shown on the map.",
@@ -102,7 +126,7 @@ export const maps: MapScenario[] = [
       "At the end of the battle: No objectives = ransacker victory. 1 objective = draw. 2+ objectives = hoarder victory.",
   },
   {
-    id: "m9",
+    id: "m11",
     name: "Along the Crumbling Coast",
     image: "/assets/Ravaged11.png",
     objectives: "Set up 3 objectives as shown on the map.",
@@ -114,7 +138,7 @@ export const maps: MapScenario[] = [
       "Take and Hold: 1 VP for each controlled objective. Fortified Position: 1 VP for each controlled objective not contested by enemy units.",
   },
   {
-    id: "m10",
+    id: "m12",
     name: "Raid on Hel's Claw",
     image: "/assets/Ravaged12.png",
     objectives:
