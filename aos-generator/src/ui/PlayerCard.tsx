@@ -1,16 +1,33 @@
-import Card from "./Card";
+export default function PlayerCard({ player, onUpdate }: any) {
+  const addStone = () => {
+    onUpdate({
+      ...player,
+      emberstone: player.emberstone + 1,
+    });
+  };
 
-export default function PlayerCard({ player }: any) {
+  const removeStone = () => {
+    onUpdate({
+      ...player,
+      emberstone: Math.max(0, player.emberstone - 1),
+    });
+  };
+
   return (
-    <Card>
+    <div className={`player-card ${player.isUnderdog ? "underdog" : ""}`}>
       <h3>{player.name}</h3>
       <p>{player.faction}</p>
-      <p>🔥 {player.emberstone}</p>
-      <p>Wins: {player.wins} / Losses: {player.loses}</p>
 
-      {player.isUnderdog && (
-        <div className="underdog-badge">UNDERDOG</div>
-      )}
-    </Card>
+      <div className="ember-controls">
+        <button onClick={removeStone}>−</button>
+        <span className="ember-count">🔥 {player.emberstone}</span>
+        <button onClick={addStone}>+</button>
+      </div>
+
+      <div className="stats">
+        <span>W: {player.wins} </span>
+        <span>L: {player.loses}</span>
+      </div>
+    </div>
   );
 }

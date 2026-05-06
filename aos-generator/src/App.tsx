@@ -8,50 +8,34 @@ import PlayerCard from "./ui/PlayerCard";
 
 const STORAGE_KEY = "aos-generator-players";
 
+const defaultPlayers = [
+  {
+    id: "1",
+    name: "Gracz 1",
+    faction: "Stormcast Eternals",
+    emberstone: 0,
+    wins: 0,
+    loses: 0,
+  },
+];
+
 const loadPlayersFromStorage = () => {
-  if (typeof window === "undefined") return [
-    {
-      id: "1",
-      name: "Gracz 1",
-      faction: "Stormcast Eternals",
-      emberstone: 0,
-      wins: 0,
-      loses: 0,
-    },
-  ];
+  if (typeof window === "undefined") return defaultPlayers;
 
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    return [
-      {
-        id: "1",
-        name: "Gracz 1",
-        faction: "Stormcast Eternals",
-        emberstone: 0,
-        wins: 0,
-        loses: 0,
-      },
-    ];
-  }
+  if (!stored) return defaultPlayers;
 
   try {
     return JSON.parse(stored);
   } catch {
-    return [
-      {
-        id: "1",
-        name: "Gracz 1",
-        faction: "Stormcast Eternals",
-        emberstone: 0,
-        wins: 0,
-        loses: 0,
-      },
-    ];
+    return defaultPlayers;
   }
 };
 
 export default function App() {
   const [players, setPlayers] = useState<any[]>(loadPlayersFromStorage);
+
+  const [winnerId, setWinnerId] = useState<string | null>(null);
 
   const [playerForm, setPlayerForm] = useState<any>({
     id: "",
@@ -61,6 +45,7 @@ export default function App() {
     wins: 0,
     loses: 0,
   });
+
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
 
   const [game, setGame] = useState<any>(null);
@@ -88,15 +73,15 @@ export default function App() {
   };
 
   const handleSavePlayer = () => {
-    if (!playerForm.name.trim() || !playerForm.faction.trim()) {
-      return;
-    }
+    if (!playerForm.name.trim() || !playerForm.faction.trim()) return;
 
     if (editingPlayerId) {
       setPlayers((prev) =>
         prev.map((player) =>
-          player.id === editingPlayerId ? { ...playerForm, id: editingPlayerId } : player
-        )
+          player.id === editingPlayerId
+            ? { ...playerForm, id: editingPlayerId }
+            : player,
+        ),
       );
     } else {
       setPlayers((prev) => [
@@ -122,100 +107,88 @@ export default function App() {
   }, [players]);
 
   const generate = () => {
-    // playRoll();
-
     const g = generateScenario(players);
 
     setGame(g);
     setTwistOptions(g.twistOptions);
-    if (g.twistOptions.length === 1) {
-      setSelectedTwist(g.twistOptions[0]);
-    } else {
-      setSelectedTwist(null);
-    }
+    setSelectedTwist(g.twistOptions.length === 1 ? g.twistOptions[0] : null);
+    setWinnerId(null); // 🔥 reset winner przy nowej grze
+  };
+
+  const endBattle = (playerId: string) => {
+    setWinnerId(playerId);
+
+    const updatedPlayers = game.players.map((p: any) => {
+      if (p.id === playerId) {
+        return {
+          ...p,
+          emberstone: p.emberstone + game.emberstoneAwarded,
+          wins: p.wins + 1,
+        };
+      }
+      return {
+        ...p,
+        loses: (p.loses || 0) + 1,
+      };
+    });
+
+    setGame((prev: any) => ({
+      ...prev,
+      players: updatedPlayers,
+    }));
+
+    setPlayers(updatedPlayers); // 🔥 zapis do globalnego stanu
   };
 
   return (
     <div className="tabletop">
-      <button className="hamburger-btn" type="button" onClick={() => setShowPlayerManager(true)}>
+      <button
+        className="hamburger-btn"
+        onClick={() => setShowPlayerManager(true)}
+      >
         ☰ Players
       </button>
 
       {showPlayerManager && (
         <div className="player-manager-modal">
-          <div className="modal-overlay" onClick={() => setShowPlayerManager(false)} />
+          <div
+            className="modal-overlay"
+            onClick={() => setShowPlayerManager(false)}
+          />
           <div className="player-manager-window">
-            <button className="close-btn" type="button" onClick={() => setShowPlayerManager(false)}>
+            <button
+              className="close-btn"
+              onClick={() => setShowPlayerManager(false)}
+            >
               ×
             </button>
-            <div className="player-manager">
-              <h2>Manage Players</h2>
-              <div className="player-form">
-                <label>
-                  Name
-                  <input
-                    value={playerForm.name}
-                    onChange={(e) => handlePlayerFormChange("name", e.target.value)}
-                    placeholder="Player name"
-                  />
-                </label>
-                <label>
-                  Faction
-                  <input
-                    value={playerForm.faction}
-                    onChange={(e) => handlePlayerFormChange("faction", e.target.value)}
-                    placeholder="Faction"
-                  />
-                </label>
-                <label>
-                  Emberstone
-                  <input
-                    type="number"
-                    value={playerForm.emberstone}
-                    onChange={(e) => handlePlayerFormChange("emberstone", Number(e.target.value))}
-                  />
-                </label>
-                <label>
-                  Wins
-                  <input
-                    type="number"
-                    value={playerForm.wins}
-                    onChange={(e) => handlePlayerFormChange("wins", Number(e.target.value))}
-                  />
-                </label>
-                <label>
-                  Losses
-                  <input
-                    type="number"
-                    value={playerForm.loses}
-                    onChange={(e) => handlePlayerFormChange("loses", Number(e.target.value))}
-                  />
-                </label>
-                <div className="form-actions">
-                  <button className="main-btn" type="button" onClick={handleSavePlayer}>
-                    {editingPlayerId ? "Save Player" : "Add Player"}
-                  </button>
-                  {editingPlayerId && (
-                    <button className="main-btn cancel" type="button" onClick={resetPlayerForm}>
-                      Cancel
-                    </button>
-                  )}
-                </div>
-              </div>
 
-              <div className="player-list">
-                {players.map((player) => (
-                  <div key={player.id} className="player-list-item">
-                    <div>
-                      <strong>{player.name}</strong> — {player.faction}
-                    </div>
-                    <button className="main-btn small" type="button" onClick={() => handleEditPlayer(player)}>
-                      Edit
-                    </button>
-                  </div>
-                ))}
+            <h2>Manage Players</h2>
+
+            <input
+              placeholder="Name"
+              value={playerForm.name}
+              onChange={(e) => handlePlayerFormChange("name", e.target.value)}
+            />
+
+            <input
+              placeholder="Faction"
+              value={playerForm.faction}
+              onChange={(e) =>
+                handlePlayerFormChange("faction", e.target.value)
+              }
+            />
+
+            <button onClick={handleSavePlayer}>
+              {editingPlayerId ? "Save" : "Add"}
+            </button>
+
+            {players.map((p) => (
+              <div key={p.id}>
+                {p.name} ({p.faction})
+                <button onClick={() => handleEditPlayer(p)}>Edit</button>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       )}
@@ -224,25 +197,17 @@ export default function App() {
         🎲 GENERATE BATTLE
       </button>
 
-      {/* ⚔️ FINALNY WIDOK GRY */}
       {game && (
         <motion.div
           className="board"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
         >
           <MapCard map={game.map} />
-          {twistOptions.length === 1 ? (
-            <motion.div
-              key={`card-${game.id}`}
-              initial={{ opacity: 0, rotateY: 90 }}
-              animate={{ opacity: 1, rotateY: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <TwistCard twist={selectedTwist} />
-            </motion.div>
-          ) : (
+
+          {selectedTwist && <TwistCard twist={selectedTwist} />}
+
+          {!selectedTwist && twistOptions.length > 0 && (
             <motion.div
               key={`table-${game.id}`}
               className="twist-table"
@@ -258,13 +223,18 @@ export default function App() {
                     <th>Effect</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {twistOptions.map((twist, index) => (
+                  {twistOptions.map((twist: any, index: number) => (
                     <motion.tr
-                      key={index}
+                      key={twist.id ?? index}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setSelectedTwist(twist)}
+                      style={{ cursor: "pointer" }}
                     >
                       <td>{twist.diceRoll}</td>
                       <td>{twist.name}</td>
@@ -276,9 +246,35 @@ export default function App() {
             </motion.div>
           )}
 
+          {selectedTwist && !winnerId && (
+            <div className="end-screen">
+              <h2>🏁 Who won?</h2>
+              {game.players.map((p: any) => (
+                <button key={p.id} onClick={() => endBattle(p.id)}>
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {winnerId && (
+            <h2 className="winner">
+              🏆 Winner:{" "}
+              {game.players.find((p: any) => p.id === winnerId)?.name}
+            </h2>
+          )}
+
           <div className="players-row">
-            {game.players.map((p: any) => (
-              <PlayerCard key={p.id} player={p} />
+            {players.map((p: any) => (
+              <PlayerCard
+                key={p.id}
+                player={p}
+                onUpdate={(updated: any) => {
+                  setPlayers((prev) =>
+                    prev.map((pl) => (pl.id === updated.id ? updated : pl)),
+                  );
+                }}
+              />
             ))}
           </div>
         </motion.div>
