@@ -155,11 +155,169 @@ body {
   width: min(92vw, 760px);
   max-height: 90vh;
   overflow: auto;
-  background: rgba(18, 10, 5, 0.96);
+  background: rgba(18, 10, 5, 0.98); /* Ciemniejsze tło */
   border: 2px solid #a88c4a;
   border-radius: 18px;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-  padding: 26px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+  padding: 30px;
+  text-align: center;
+  font-family: "Cinzel", serif;
+  color: #f0e6d2;
+}
+
+.player-manager-window h2 {
+  margin-top: 0;
+  color: #c9a44c;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(168, 140, 74, 0.3);
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.player-manager-window input {
+  background: rgba(40, 30, 20, 0.8);
+  border: 1px solid #a88c4a;
+  border-radius: 6px;
+  padding: 10px 15px;
+  color: #fff3cc;
+  font-family: "Cinzel", serif;
+  margin: 8px;
+  width: 220px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.player-manager-window input:focus {
+  border-color: #ffcc00;
+  box-shadow: 0 0 10px rgba(201, 164, 76, 0.3);
+  background: rgba(55, 45, 30, 0.9);
+}
+
+.player-manager-window .add-btn {
+  background: linear-gradient(180deg, #a88c4a 0%, #7a6332 100%);
+  border: 1px solid #5e4b23;
+  border-radius: 6px;
+  padding: 10px 25px;
+  color: #120a05;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.player-manager-window .add-btn:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 15px rgba(168, 140, 74, 0.4);
+}
+
+.players-list-admin {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.player-admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #a88c4a;
+  transition: background 0.2s;
+}
+
+.player-admin-row:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.player-admin-row span {
+  font-size: 14px;
+  color: #f0e6d2;
+}
+
+.player-admin-row strong {
+  color: #ffcc00;
+  margin-right: 5px;
+}
+
+.edit-btn {
+  background: transparent !important;
+  color: #a88c4a !important;
+  border: 1px solid #a88c4a !important;
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  border-radius: 4px;
+}
+
+.edit-btn:hover {
+  background: #a88c4a !important;
+  color: #120a05 !important;
+}
+
+/* Tło przyciemniające całą stronę */
+.player-manager-modal {
+  position: fixed; /* Zawsze względem okna przeglądarki */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000; /* Musi być nad wszystkim innym */
+
+  /* Centrowanie zawartości */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Klikalna warstwa pod spodem */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Mocne przyciemnienie */
+  backdrop-filter: blur(4px); /* Lekkie rozmycie tła dla klimatu */
+}
+
+/* Okno modala - poprawione centrowanie */
+.player-manager-window {
+  position: relative; /* Względem flexboxa z rodzica */
+  z-index: 1001;
+  width: min(92vw, 760px);
+  max-height: 85vh; /* Nie więcej niż wysokość ekranu */
+  overflow-y: auto; /* Scrollowanie jeśli graczy jest dużo */
+  background: #120a05;
+  border: 2px solid #a88c4a;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow:
+    0 0 50px rgba(0, 0, 0, 1),
+    0 0 20px rgba(168, 140, 74, 0.2);
+}
+
+/* Przycisk zamknięcia (X) w rogu */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #a88c4a;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #ffcc00;
 }
 
 .close-btn {

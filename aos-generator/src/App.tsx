@@ -119,14 +119,12 @@ export default function App() {
 
     setGame(g);
     setTwistOptions(g.twistOptions);
-    // Jeśli jest tylko jedna opcja, wybierz ją automatycznie, w przeciwnym razie pokaż tabelę
     setSelectedTwist(g.twistOptions.length === 1 ? g.twistOptions[0] : null);
     setWinnerId(null);
   };
 
   return (
     <div className="tabletop">
-      {/* ☰ MENU */}
       <button
         className="hamburger-btn"
         onClick={() => setShowPlayerManager(true)}
@@ -134,13 +132,13 @@ export default function App() {
         ☰ Players
       </button>
 
-      {/* 🧾 MODAL */}
       {showPlayerManager && (
         <div className="player-manager-modal">
           <div
             className="modal-overlay"
             onClick={() => setShowPlayerManager(false)}
           />
+
           <div className="player-manager-window">
             <button
               className="close-btn"
@@ -151,31 +149,38 @@ export default function App() {
 
             <h2>Manage Players</h2>
 
-            <input
-              placeholder="Name"
-              value={playerForm.name}
-              onChange={(e) => handlePlayerFormChange("name", e.target.value)}
-            />
+            <div className="player-form">
+              <input
+                placeholder="Name"
+                value={playerForm.name}
+                onChange={(e) => handlePlayerFormChange("name", e.target.value)}
+              />
 
-            <input
-              placeholder="Faction"
-              value={playerForm.faction}
-              onChange={(e) =>
-                handlePlayerFormChange("faction", e.target.value)
-              }
-            />
+              <input
+                placeholder="Faction"
+                value={playerForm.faction}
+                onChange={(e) =>
+                  handlePlayerFormChange("faction", e.target.value)
+                }
+              />
 
-            <button onClick={handleSavePlayer}>
-              {editingPlayerId ? "Save" : "Add"}
-            </button>
+              <button className="add-btn" onClick={handleSavePlayer}>
+                {editingPlayerId ? "Save Changes" : "Add Player"}
+              </button>
+            </div>
 
             <div className="players-list-admin">
               {players.map((p) => (
                 <div key={p.id} className="player-admin-row">
                   <span>
-                    {p.name} ({p.faction})
+                    <strong>{p.name.toUpperCase()}</strong> — {p.faction}
                   </span>
-                  <button onClick={() => handleEditPlayer(p)}>Edit</button>
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEditPlayer(p)}
+                  >
+                    Edit
+                  </button>
                 </div>
               ))}
             </div>
@@ -183,7 +188,6 @@ export default function App() {
         </div>
       )}
 
-      {/* REGION SELECTOR - Klikalny cały Label */}
       <div className="region-selector">
         {[
           { key: "scorched", label: "Scorched Outskirts" },
@@ -220,7 +224,7 @@ export default function App() {
       </div>
 
       <button className="main-btn" onClick={generate}>
-        🎲 GENERATE BATTLE
+        GENERATE BATTLE
       </button>
 
       {game && (
@@ -232,7 +236,6 @@ export default function App() {
         >
           <MapCard map={game.map} />
 
-          {/* TWIST SECTION */}
           <div className="twist-section" style={{ margin: "20px 0" }}>
             {selectedTwist ? (
               <div className="selected-twist-container">
