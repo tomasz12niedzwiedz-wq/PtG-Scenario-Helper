@@ -638,8 +638,7 @@ body {
   flex-wrap: wrap;
 }
 
-.region-card,
-.reset-twist-btn {
+.region-card {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -674,4 +673,29 @@ body {
   background: rgba(80, 60, 20, 0.75);
   color: #fff3cc;
   box-shadow: 0 0 10px rgba(201, 164, 76, 0.35);
+}
+
+.reset-twist-btn {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 13%;
+  position: relative;
+  padding: 14px 22px;
+  min-width: 180px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 215, 0, 0.15);
+  background: linear-gradient(
+    145deg,
+    rgba(35, 25, 15, 0.95),
+    rgba(10, 8, 5, 0.95)
+  );
+  color: #b9a57a;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
 }
